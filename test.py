@@ -1,4 +1,3 @@
-pip install statsmodels
 import streamlit as st
 import statsmodels.api as sm
 import pandas as pd
