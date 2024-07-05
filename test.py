@@ -179,7 +179,7 @@ def set_background_and_primary_color():
 
 # Main function to run the Streamlit app
 def main():
-    set_background_and_primary_color()
+    # set_background_and_primary_color()
     st.title("Longley Dataset Analysis")
 
     # Load data
