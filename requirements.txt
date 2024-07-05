@@ -1,7 +1,6 @@
 streamlit
-statsmodels
 pandas
+statsmodels
 plotly
 scikit-learn
 numpy
-hmac
