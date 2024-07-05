@@ -148,7 +148,7 @@ def calculate_yoy_diff(data):
 
 # Function to set background image and primary color
 #def set_background_and_primary_color():
-    #background_image = "C:/Users/kimia.mirsalehi/Downloads/v.png" # Replace with the path to your background image
+    #background_image = "path" # Replace with the path to your background image
     #with open(background_image, "rb") as image_file:
         #encoded_image = base64.b64encode(image_file.read()).decode()
     #css = f"""
