@@ -1,7 +1,8 @@
-streamlit 
+streamlit
 statsmodels
 pandas
-plotly 
-sklearn
-numpy 
+plotly
+scikit-learn
+numpy
 base64
+
