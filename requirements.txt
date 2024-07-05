@@ -1,10 +1,7 @@
 streamlit 
-statsmodels.api
+statsmodels
 pandas
-plotly.express 
-plotly.graph_objs 
-plotly.figure_factory 
-statsmodels.stats.outliers_influence 
-sklearn.metrics
+plotly 
+sklearn
 numpy 
 base64
