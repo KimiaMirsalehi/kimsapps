@@ -148,6 +148,7 @@ def calculate_yoy_diff(data):
 
 def check_password():
     """Returns `True` if the user has the correct password."""
+
     def password_entered():
         """Checks whether a password entered by the user is correct."""
         if hmac.compare_digest(st.session_state["password"], st.secrets["password"]["password"]):
@@ -167,6 +168,7 @@ def check_password():
     if "password_correct" in st.session_state and not st.session_state["password_correct"]:
         st.error("😕 Password incorrect")
     return False
+
 
 # Function to set background image and primary color
 #def set_background_and_primary_color():
@@ -199,13 +201,12 @@ def check_password():
     #"""
     #st.markdown(css, unsafe_allow_html=True)
 
-# Main function to run the Streamlit app
 def main():
     # Password protection
     if not check_password():
         st.stop()  # Do not continue if check_password is not True.
 
-    # set_background_and_primary_color()
+    # Your main app logic starts here
     st.title("Longley Dataset Analysis")
 
     # Load data
@@ -214,8 +215,6 @@ def main():
     # Display data overview
     st.write("Dataset Overview:")
     st.write(data.head())
-
-
 
     # User input for model fitting
     st.sidebar.title("Model Input")
@@ -226,7 +225,6 @@ def main():
     if transform_data:
         data_diff = calculate_yoy_diff(data)
         data = pd.concat([data, data_diff], axis=1)
-
 
     available_columns = data.columns.tolist()
     x_cols = st.sidebar.multiselect("Select independent variables (X)", options=available_columns)
@@ -273,7 +271,6 @@ def main():
         plot_residuals(model, data[x_cols], data[y_col])
     elif visualization == "VIF" and x_cols and y_col:
         display_vif(sm.add_constant(data[x_cols]))
-        
 
 # Run the app
 if __name__ == "__main__":
