@@ -1,13 +1,13 @@
-import streamlit as st
-import statsmodels.api as sm
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objs as go
-import plotly.figure_factory as ff
-from statsmodels.stats.outliers_influence import variance_inflation_factor
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import numpy as np
-import base64
+#import streamlit as st
+#import statsmodels.api as sm
+#import pandas as pd
+#import plotly.express as px
+#import plotly.graph_objs as go
+#import plotly.figure_factory as ff
+#from statsmodels.stats.outliers_influence import variance_inflation_factor
+#from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+#import numpy as np
+#import base64
 
 
 # Function to load and process the dataset
