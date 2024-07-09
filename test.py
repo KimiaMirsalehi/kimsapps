@@ -44,7 +44,7 @@ def fit_model(data, x_cols, y_col):
     # Filter numeric columns for imputation
     numeric_cols = data.select_dtypes(include=[np.number]).columns
     data_filled = data.copy()
-    data_filled[numeric_cols] = data[numeric_cols].fillna(data[numeric_cols].mean())
+    data_filled[numeric_cols] = data[numeric_cols].fillna(data[numeric_cols].max())
 
     X = data_filled[x_cols]
     y = data_filled[y_col]
@@ -172,7 +172,7 @@ def check_password():
 
 # Function to set background image and primary color
 def set_background_and_primary_color():
-    background_image_url = "https://images8.alphacoders.com/591/591043.jpg"  # Replace with the URL to your background image
+    background_image_url = "https://get.wallhere.com/photo/simple-background-minimalism-humor-artwork-death-dark-humor-brand-product-243890.jpg"  # Replace with the URL to your background image
     
     css = f"""
     <style>
@@ -204,7 +204,7 @@ def main():
     # Password protection
     if not check_password():
         st.stop()  # Do not continue if check_password is not True.
-    #set_background_and_primary_color()
+    set_background_and_primary_color()
 
     # Your main app logic starts here
     st.title("Longley Dataset Analysis")
