@@ -204,7 +204,7 @@ def main():
     # Password protection
     if not check_password():
         st.stop()  # Do not continue if check_password is not True.
-    set_background_and_primary_color()
+    #set_background_and_primary_color()
 
     # Your main app logic starts here
     st.title("Longley Dataset Analysis")
