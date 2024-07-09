@@ -123,7 +123,7 @@ def plot_time_series(data):
 def calculate_regression_metrics(model, X, y):
     X_with_const = sm.add_constant(X)
     predicted = model.predict(X_with_const)
-    
+    predicted = predicted.fillna(predicted.mean())
     r2 = r2_score(y, predicted)
     mae = mean_absolute_error(y, predicted)
     mse = mean_squared_error(y, predicted)
