@@ -47,7 +47,7 @@ def fit_model(data, x_cols, y_col):
     data_filled[numeric_cols] = data[numeric_cols].fillna(data[numeric_cols].max())
 
     X = data_filled[x_cols]
-    y = data_filled[y_col]
+    y = data_filled[y_col].fillna(data[y_col].max())
     X = sm.add_constant(X)
     
     try:
