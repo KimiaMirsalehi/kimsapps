@@ -171,40 +171,40 @@ def check_password():
 
 
 # Function to set background image and primary color
-#def set_background_and_primary_color():
-    #background_image = "path" # Replace with the path to your background image
-    #with open(background_image, "rb") as image_file:
-        #encoded_image = base64.b64encode(image_file.read()).decode()
-    #css = f"""
-    #<style>
-    #.stApp {{
-    #    background-image: url("data:image/jpeg;base64,{encoded_image}");
-    #    background-size: cover;
-    #}}
-    #.stButton > button {{
-    #    background-color: #6a0dad;
-    #    color: white;
-    #}}
-    #.stSelectbox > div > div > div {{
-    #    color: #6a0dad;
-    #}}
-    #.stSidebar > div {{
-    #    background-color: #6a0dad;
-    #}}
-    #.css-1e5imcs {{
-    #    color: #6a0dad;
-    #}}
-    #.css-1v3fvcr {{
-    #    color: #6a0dad;
-    #}}
-    #</style>
-    #"""
-    #st.markdown(css, unsafe_allow_html=True)
+def set_background_and_primary_color():
+    background_image_url = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fru.pinterest.com%2Fpin%2Fhd-wallpaper-53790593-funny-wallpaper--526147168976454320%2F&psig=AOvVaw1EtW94621v0P9GkR6P9kbL&ust=1720610918779000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCPDmzKjtmYcDFQAAAAAdAAAAABAE"  # Replace with the URL to your background image
+    
+    css = f"""
+    <style>
+    .stApp {{
+       background-image: url("{background_image_url}");
+       background-size: cover;
+    }}
+    .stButton > button {{
+       background-color: #6a0dad;
+       color: white;
+    }}
+    .stSelectbox > div > div > div {{
+       color: #6a0dad;
+    }}
+    .stSidebar > div {{
+       background-color: #6a0dad;
+    }}
+    .css-1e5imcs {{
+       color: #6a0dad;
+    }}
+    .css-1v3fvcr {{
+       color: #6a0dad;
+    }}
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
 
 def main():
     # Password protection
     if not check_password():
         st.stop()  # Do not continue if check_password is not True.
+    set_background_and_primary_color()
 
     # Your main app logic starts here
     st.title("Longley Dataset Analysis")
