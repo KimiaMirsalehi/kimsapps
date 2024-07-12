@@ -201,6 +201,10 @@ def set_background_and_primary_color():
     """
     st.markdown(css, unsafe_allow_html=True)
 
+def subburstfunc(data, x_var, y_var):
+    fig = px.sunburst(data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
+    st.plotly_chart(fig)
+
 def main():
     # Password protection
     if not check_password():
@@ -272,6 +276,7 @@ def main():
         plot_residuals(model, data[x_cols], data[y_col])
     elif visualization == "VIF" and x_cols and y_col:
         display_vif(sm.add_constant(data[x_cols]))
+        subburstfunc(data, 'YEAR', y_col)
 
 # Run the app
 if __name__ == "__main__":
