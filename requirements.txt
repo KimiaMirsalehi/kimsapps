@@ -4,3 +4,6 @@ statsmodels
 plotly
 scikit-learn
 numpy
+PyMuPDF
+Pillow
+matplotlib
