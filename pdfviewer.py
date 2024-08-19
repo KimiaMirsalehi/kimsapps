@@ -14,7 +14,9 @@ EXCEL_FILE = os.path.join(FILE_FOLDER, 'pdf_details.xlsx')
 
 # Utility functions
 def list_files():
-    return [f for f in os.listdir(FILE_FOLDER) if os.path.isfile(os.path.join(FILE_FOLDER, f))]
+    # Only return files with a .pdf extension
+    return [f for f in os.listdir(FILE_FOLDER) if f.endswith('.pdf') and os.path.isfile(os.path.join(FILE_FOLDER, f))]
+
 
 def render_page(page, zoom_level):
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom_level, zoom_level))
@@ -175,6 +177,7 @@ def main():
         st.session_state.selected_file = None
         display_dashboard()
     elif st.session_state.page == "Document Library":
+        # Only list PDF files
         files = list_files()
         selected_file = st.sidebar.selectbox("Select a file", files)
         if selected_file:
