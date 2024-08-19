@@ -156,17 +156,10 @@ def display_settings():
 # Main function
 def main():
     st.set_page_config(page_title="Dashboard", layout="wide")
-    # Custom CSS for sidebar
-    st.markdown("""
-        <style>
-        [data-testid="stSidebar"] {
-            background-color: #D8BFD8;
-        }
-        [data-testid="stSidebarNav"] {
-            font-size: 18px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+
+    # Initialize session state for zoom level if it does not exist
+    if 'zoom_level' not in st.session_state:
+        st.session_state.zoom_level = 1.0  # default zoom level
 
     with st.sidebar:
         st.title("Navigation")
@@ -188,13 +181,18 @@ def main():
             file_path = os.path.join(FILE_FOLDER, st.session_state.selected_file)
             if st.session_state.selected_file.lower().endswith('.pdf'):
                 st.sidebar.header("View Options")
-                zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 1.0, 0.1)
-                display_pdf(file_path, zoom_level)
+                
+                # Maintain the slider value using session state
+                st.session_state.zoom_level = st.sidebar.slider(
+                    "Zoom Level", 
+                    1.0, 
+                    5.0, 
+                    st.session_state.zoom_level, 
+                    0.1
+                )
+                display_pdf(file_path, st.session_state.zoom_level)
             else:
                 st.error("Unsupported file type")
     elif st.session_state.page == "Settings":
         display_settings()
 
-
-if __name__ == "__main__":
-    main()
