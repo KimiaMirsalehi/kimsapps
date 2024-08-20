@@ -4,8 +4,8 @@ import fitz  # PyMuPDF
 from PIL import Image
 import io
 import os
-import matplotlib.pyplot as plt
 import json
+import matplotlib.pyplot as plt
 
 # Constants
 FILE_FOLDER = 'files'
@@ -52,6 +52,19 @@ def apply_theme(theme):
             }
             [data-testid="stSidebarNav"] {
                 color: white;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+    else:
+        # Default theme
+        st.markdown("""
+            <style>
+            [data-testid="stSidebar"] {
+                background-color: #D8BFD8;
+            }
+            [data-testid="stSidebarNav"] {
+                font-size: 18px;
+                color: black;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -148,9 +161,9 @@ def display_settings():
 
     # Define the default theme (persist it in session state)
     if 'default_theme' not in st.session_state:
-        st.session_state.default_theme = "Light"
+        st.session_state.default_theme = "Default"  # This is your specified default theme
 
-    theme = st.radio("Theme", ["Light", "Dark"], index=0 if st.session_state.default_theme == "Light" else 1)
+    theme = st.radio("Theme", ["Default", "Light", "Dark"], index=["Default", "Light", "Dark"].index(st.session_state.default_theme))
 
     if st.button("Set as Default Theme"):
         st.session_state.default_theme = theme
