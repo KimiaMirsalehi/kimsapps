@@ -150,7 +150,7 @@ def display_settings():
                 color: white;
             }
             [data-testid="stMarkdownContainer"] {
-                color: black; /* Ensure markdown container text is dark */
+                color: white; /* Ensure markdown container text is dark */
             }
             </style>
             """, unsafe_allow_html=True)
