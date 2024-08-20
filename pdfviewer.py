@@ -131,16 +131,22 @@ def apply_theme():
             <style>
             body {
                 background-color: #121212;
-                color: inherit;
+                color: black; /* Retain the original text color */
             }
             [data-testid="stSidebar"] {
                 background-color: #333333;
             }
             [data-testid="stMarkdownContainer"] {
-                color: white;
+                color: black; /* Retain the original text color */
             }
             [data-testid="stSidebarNav"] * {
                 color: white;
+            }
+            [data-testid="stSidebarNav"] h1, [data-testid="stSidebarNav"] h2, [data-testid="stSidebarNav"] h3 {
+                color: white;
+            }
+            .stSlider > div > div > div {
+                background-color: purple;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -156,6 +162,12 @@ def apply_theme():
             }
             [data-testid="stSidebarNav"] * {
                 color: #000;
+            }
+            [data-testid="stSidebarNav"] h1, [data-testid="stSidebarNav"] h2, [data-testid="stSidebarNav"] h3 {
+                color: black;
+            }
+            .stSlider > div > div > div {
+                background-color: purple;
             }
             </style>
             """, unsafe_allow_html=True)
