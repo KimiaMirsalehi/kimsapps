@@ -122,11 +122,16 @@ def display_settings():
     if theme == "Light":
         st.markdown("""
             <style>
+            body {
+                color: black;
+                background-color: white;
+            }
             [data-testid="stSidebar"] {
                 background-color: #D8BFD8;
             }
             [data-testid="stSidebarNav"] {
                 font-size: 18px;
+                color: black;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -134,19 +139,24 @@ def display_settings():
         st.markdown("""
             <style>
             body {
-                color: white;
+                color: black; /* Ensure body text remains dark */
                 background-color: #121212;
             }
             [data-testid="stSidebar"] {
                 background-color: #333333;
+                color: white;
+            }
+            [data-testid="stSidebarNav"] {
+                color: white;
             }
             [data-testid="stMarkdownContainer"] {
-                color: white;
+                color: black; /* Ensure markdown container text is dark */
             }
             </style>
             """, unsafe_allow_html=True)
 
-    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 1.0, 0.1)
+
+    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 5.0, 0.1)
     st.write(f"Default zoom level set to: {default_zoom}")
 
     save_location = st.text_input("Notes' Default Save Location", JSON_FOLDER)
@@ -188,7 +198,7 @@ def main():
             file_path = os.path.join(FILE_FOLDER, st.session_state.selected_file)
             if st.session_state.selected_file.lower().endswith('.pdf'):
                 st.sidebar.header("View Options")
-                zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 1.0, 0.1)
+                zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 5.0, 0.1)
                 display_pdf(file_path, zoom_level)
             else:
                 st.error("Unsupported file type")
