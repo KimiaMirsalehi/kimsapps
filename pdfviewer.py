@@ -14,9 +14,7 @@ EXCEL_FILE = os.path.join(FILE_FOLDER, 'pdf_details.xlsx')
 
 # Utility functions
 def list_files():
-    # Only return files with a .pdf extension
     return [f for f in os.listdir(FILE_FOLDER) if f.endswith('.pdf') and os.path.isfile(os.path.join(FILE_FOLDER, f))]
-
 
 def render_page(page, zoom_level):
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom_level, zoom_level))
@@ -44,7 +42,6 @@ def display_pdf(file_path, zoom_level):
         if st.button("Next") and st.session_state.page_num < num_pages - 1:
             st.session_state.page_num += 1
 
-    # Annotation and notes
     notes_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_notes.json")
     annotations = ""
     if os.path.exists(notes_file):
@@ -72,14 +69,12 @@ def display_dashboard():
         
         st.title("Dashboard")
 
-        # Pagination
         page_size = 20
         total_pages = len(df) // page_size + 1
         page_num = st.sidebar.number_input("Page", min_value=1, max_value=total_pages, step=1)
         start_idx = (page_num - 1) * page_size
         st.dataframe(df.iloc[start_idx:start_idx + page_size], use_container_width=True)
 
-        # Create columns for document list and pie chart
         col1, col2 = st.columns([2, 1])
 
         with col1:
@@ -112,30 +107,31 @@ def display_dashboard():
     else:
         st.error(f"Excel file not found at {EXCEL_FILE}")
 
-
 def display_settings():
     st.title("Settings")
     st.write("Adjust your preferences below:")
 
-    # Example settings options
     theme = st.radio("Theme", ["Light", "Dark"], index=0)
     if theme == "Light":
-        st.markdown("""
-            <style>
-            [data-testid="stSidebar"] {
-                background-color: #D8BFD8;
-            }
-            [data-testid="stSidebarNav"] {
-                font-size: 18px;
-            }
-            </style>
-            """, unsafe_allow_html=True)
+        st.session_state.theme = "light"
     else:
+        st.session_state.theme = "dark"
+    
+    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 1.0, 0.1)
+    st.session_state.default_zoom = default_zoom
+
+    save_location = st.text_input("Notes' Default Save Location", JSON_FOLDER)
+    st.session_state.save_location = save_location
+
+    st.write(f"Files will be saved to: {save_location}")
+
+def apply_theme():
+    if st.session_state.get("theme", "light") == "dark":
         st.markdown("""
             <style>
             body {
-                color: white;
                 background-color: #121212;
+                color: inherit;
             }
             [data-testid="stSidebar"] {
                 background-color: #333333;
@@ -143,30 +139,33 @@ def display_settings():
             [data-testid="stMarkdownContainer"] {
                 color: white;
             }
+            [data-testid="stSidebarNav"] * {
+                color: white;
+            }
             </style>
             """, unsafe_allow_html=True)
-
-    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 1.0, 0.1)
-    st.write(f"Default zoom level set to: {default_zoom}")
-
-    save_location = st.text_input("Notes' Default Save Location", JSON_FOLDER)
-    st.write(f"Files will be saved to: {save_location}")
-
+    else:
+        st.markdown("""
+            <style>
+            body {
+                color: #000;
+                background-color: #fff;
+            }
+            [data-testid="stSidebar"] {
+                background-color: #D8BFD8;
+            }
+            [data-testid="stSidebarNav"] * {
+                color: #000;
+            }
+            </style>
+            """, unsafe_allow_html=True)
 
 # Main function
 def main():
     st.set_page_config(page_title="Dashboard", layout="wide")
-    # Custom CSS for sidebar
-    st.markdown("""
-        <style>
-        [data-testid="stSidebar"] {
-            background-color: #D8BFD8;
-        }
-        [data-testid="stSidebarNav"] {
-            font-size: 18px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+
+    # Apply theme based on session state
+    apply_theme()
 
     with st.sidebar:
         st.title("Navigation")
@@ -177,7 +176,6 @@ def main():
         st.session_state.selected_file = None
         display_dashboard()
     elif st.session_state.page == "Document Library":
-        # Only list PDF files
         files = list_files()
         selected_file = st.sidebar.selectbox("Select a file", files)
         if selected_file:
@@ -186,15 +184,18 @@ def main():
         if st.session_state.get('selected_file'):
             st.title("Regulation Viewer")
             file_path = os.path.join(FILE_FOLDER, st.session_state.selected_file)
-            if st.session_state.selected_file.lower().endswith('.pdf'):
-                st.sidebar.header("View Options")
-                zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 1.0, 0.1)
-                display_pdf(file_path, zoom_level)
-            else:
-                st.error("Unsupported file type")
+            st.sidebar.header("View Options")
+            zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, st.session_state.get("default_zoom", 1.0), 0.1)
+            display_pdf(file_path, zoom_level)
     elif st.session_state.page == "Settings":
         display_settings()
 
-
 if __name__ == "__main__":
+    if 'theme' not in st.session_state:
+        st.session_state.theme = "light"  # Default theme
+    if 'default_zoom' not in st.session_state:
+        st.session_state.default_zoom = 1.0  # Default zoom level
+    if 'save_location' not in st.session_state:
+        st.session_state.save_location = JSON_FOLDER  # Default save location
+
     main()
