@@ -4,8 +4,8 @@ import fitz  # PyMuPDF
 from PIL import Image
 import io
 import os
-import matplotlib.pyplot as plt
 import json
+import matplotlib.pyplot as plt
 
 # Constants
 FILE_FOLDER = 'files'
@@ -14,14 +14,60 @@ EXCEL_FILE = os.path.join(FILE_FOLDER, 'pdf_details.xlsx')
 
 # Utility functions
 def list_files():
-    # Only return files with a .pdf extension
     return [f for f in os.listdir(FILE_FOLDER) if f.endswith('.pdf') and os.path.isfile(os.path.join(FILE_FOLDER, f))]
-
 
 def render_page(page, zoom_level):
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom_level, zoom_level))
     img = Image.open(io.BytesIO(pix.tobytes()))
     return img
+
+def apply_theme(theme):
+    """Apply the selected theme."""
+    if theme == "Light":
+        st.markdown("""
+            <style>
+            body {
+                color: black;
+                background-color: white;
+            }
+            [data-testid="stSidebar"] {
+                background-color: #D8BFD8;
+                color: black;
+            }
+            [data-testid="stSidebarNav"] {
+                color: black;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+    elif theme == "Dark":
+        st.markdown("""
+            <style>
+            body {
+                color: white;
+                background-color: #121212;
+            }
+            [data-testid="stSidebar"] {
+                background-color: #333333;
+                color: white;
+            }
+            [data-testid="stSidebarNav"] {
+                color: white;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+    else:
+        # Default theme
+        st.markdown("""
+            <style>
+            [data-testid="stSidebar"] {
+                background-color: #D8BFD8;
+            }
+            [data-testid="stSidebarNav"] {
+                font-size: 18px;
+                color: black;
+            }
+            </style>
+            """, unsafe_allow_html=True)
 
 def display_pdf(file_path, zoom_level):
     doc = fitz.open(file_path)
@@ -44,7 +90,6 @@ def display_pdf(file_path, zoom_level):
         if st.button("Next") and st.session_state.page_num < num_pages - 1:
             st.session_state.page_num += 1
 
-    # Annotation and notes
     notes_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_notes.json")
     annotations = ""
     if os.path.exists(notes_file):
@@ -72,14 +117,12 @@ def display_dashboard():
         
         st.title("Dashboard")
 
-        # Pagination
         page_size = 20
         total_pages = len(df) // page_size + 1
         page_num = st.sidebar.number_input("Page", min_value=1, max_value=total_pages, step=1)
         start_idx = (page_num - 1) * page_size
         st.dataframe(df.iloc[start_idx:start_idx + page_size], use_container_width=True)
 
-        # Create columns for document list and pie chart
         col1, col2 = st.columns([2, 1])
 
         with col1:
@@ -112,49 +155,21 @@ def display_dashboard():
     else:
         st.error(f"Excel file not found at {EXCEL_FILE}")
 
-
 def display_settings():
     st.title("Settings")
     st.write("Adjust your preferences below:")
 
-    # Example settings options
-    theme = st.radio("Theme", ["Light", "Dark"], index=0)
-    if theme == "Light":
-        st.markdown("""
-            <style>
-            body {
-                color: black;
-                background-color: white;
-            }
-            [data-testid="stSidebar"] {
-                background-color: #D8BFD8;
-            }
-            [data-testid="stSidebarNav"] {
-                font-size: 18px;
-                color: black;
-            }
-            </style>
-            """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-            <style>
-            body {
-                color: black; /* Ensure body text remains dark */
-                background-color: #121212;
-            }
-            [data-testid="stSidebar"] {
-                background-color: #333333;
-                color: white;
-            }
-            [data-testid="stSidebarNav"] {
-                color: white;
-            }
-            [data-testid="stMarkdownContainer"] {
-                color: grey; /* Ensure markdown container text is dark */
-            }
-            </style>
-            """, unsafe_allow_html=True)
+    # Initialize default theme in session state if it doesn't exist
+    if 'default_theme' not in st.session_state:
+        st.session_state.default_theme = "Default"  # Default to the specified default theme
 
+    theme = st.radio("Theme", ["Default", "Light", "Dark"], index=["Default", "Light", "Dark"].index(st.session_state.default_theme))
+
+    if st.button("Set as Default Theme"):
+        st.session_state.default_theme = theme
+        st.success(f"Default theme set to: {theme}")
+
+    apply_theme(theme)
 
     default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 5.0, 0.1)
     st.write(f"Default zoom level set to: {default_zoom}")
@@ -162,21 +177,14 @@ def display_settings():
     save_location = st.text_input("Notes' Default Save Location", JSON_FOLDER)
     st.write(f"Files will be saved to: {save_location}")
 
-
-# Main function
 def main():
     st.set_page_config(page_title="Dashboard", layout="wide")
-    # Custom CSS for sidebar
-    st.markdown("""
-        <style>
-        [data-testid="stSidebar"] {
-            background-color: #D8BFD8;
-        }
-        [data-testid="stSidebarNav"] {
-            font-size: 18px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+
+    # Ensure default theme is applied on app load
+    if 'default_theme' not in st.session_state:
+        st.session_state.default_theme = "Default"  # This should be set to your desired default theme if it doesn't exist
+
+    apply_theme(st.session_state.default_theme)
 
     with st.sidebar:
         st.title("Navigation")
@@ -187,7 +195,6 @@ def main():
         st.session_state.selected_file = None
         display_dashboard()
     elif st.session_state.page == "Document Library":
-        # Only list PDF files
         files = list_files()
         selected_file = st.sidebar.selectbox("Select a file", files)
         if selected_file:
@@ -204,7 +211,6 @@ def main():
                 st.error("Unsupported file type")
     elif st.session_state.page == "Settings":
         display_settings()
-
 
 if __name__ == "__main__":
     main()
