@@ -21,6 +21,41 @@ def render_page(page, zoom_level):
     img = Image.open(io.BytesIO(pix.tobytes()))
     return img
 
+def apply_theme(theme):
+    """Apply the selected theme."""
+    if theme == "Light":
+        st.markdown("""
+            <style>
+            body {
+                color: black;
+                background-color: white;
+            }
+            [data-testid="stSidebar"] {
+                background-color: #D8BFD8;
+                color: black;
+            }
+            [data-testid="stSidebarNav"] {
+                color: black;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+    elif theme == "Dark":
+        st.markdown("""
+            <style>
+            body {
+                color: black;
+                background-color: #121212;
+            }
+            [data-testid="stSidebar"] {
+                background-color: #333333;
+                color: white;
+            }
+            [data-testid="stSidebarNav"] {
+                color: white;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
 def display_pdf(file_path, zoom_level):
     doc = fitz.open(file_path)
     num_pages = len(doc)
@@ -111,44 +146,19 @@ def display_settings():
     st.title("Settings")
     st.write("Adjust your preferences below:")
 
-    theme = st.radio("Theme", ["Light", "Dark"], index=0)
-    if theme == "Light":
-        st.markdown("""
-            <style>
-            body {
-                color: black;
-                background-color: white;
-            }
-            [data-testid="stSidebar"] {
-                background-color: #D8BFD8;
-            }
-            [data-testid="stSidebarNav"] {
-                font-size: 18px;
-                color: black;
-            }
-            </style>
-            """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-            <style>
-            body {
-                color: black; /* Ensure body text remains dark */
-                background-color: #121212;
-            }
-            [data-testid="stSidebar"] {
-                background-color: #333333;
-                color: white;
-            }
-            [data-testid="stSidebarNav"] {
-                color: white;
-            }
-            [data-testid="stMarkdownContainer"] {
-                color: black; /* Ensure markdown container text is dark */
-            }
-            </style>
-            """, unsafe_allow_html=True)
+    # Define the default theme (persist it in session state)
+    if 'default_theme' not in st.session_state:
+        st.session_state.default_theme = "Light"
 
-    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 5.0, 0.1)  # Default to 5.0
+    theme = st.radio("Theme", ["Light", "Dark"], index=0 if st.session_state.default_theme == "Light" else 1)
+
+    if st.button("Set as Default Theme"):
+        st.session_state.default_theme = theme
+        st.success(f"Default theme set to: {theme}")
+
+    apply_theme(theme)
+
+    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 5.0, 0.1)
     st.write(f"Default zoom level set to: {default_zoom}")
 
     save_location = st.text_input("Notes' Default Save Location", JSON_FOLDER)
@@ -156,6 +166,9 @@ def display_settings():
 
 def main():
     st.set_page_config(page_title="Dashboard", layout="wide")
+
+    # Apply the default theme on app load
+    apply_theme(st.session_state.default_theme)
 
     with st.sidebar:
         st.title("Navigation")
@@ -176,7 +189,7 @@ def main():
             file_path = os.path.join(FILE_FOLDER, st.session_state.selected_file)
             if st.session_state.selected_file.lower().endswith('.pdf'):
                 st.sidebar.header("View Options")
-                zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 5.0, 0.1)  # Default to 5.0
+                zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 5.0, 0.1)
                 display_pdf(file_path, zoom_level)
             else:
                 st.error("Unsupported file type")
