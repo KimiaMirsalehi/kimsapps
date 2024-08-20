@@ -44,10 +44,10 @@ def apply_theme(theme):
             <style>
             body {
                 color: white;
-                background-color: #121212;
+                background-color: #E5E4E2;
             }
             [data-testid="stSidebar"] {
-                background-color: #333333;
+                background-color: #483248;
                 color: white;
             }
             [data-testid="stSidebarNav"] {
