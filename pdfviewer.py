@@ -44,7 +44,7 @@ def apply_theme(theme):
             <style>
             body {
                 color: white;
-                background-color: #C0C0C0;
+                background-color: #BDB5D5;
             }
             [data-testid="stSidebar"] {
                 background-color: #483248;
