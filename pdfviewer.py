@@ -50,8 +50,8 @@ def apply_theme(theme):
                 background-color: #483248;
                 color: white;
             }
-            [data-testid="stSidebarNav"] {
-                color: white;
+            [data-testid="stSidebarNav"] * {
+                color: white !important;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -121,7 +121,7 @@ def display_dashboard():
         total_pages = len(df) // page_size + 1
         page_num = st.sidebar.number_input("Page", min_value=1, max_value=total_pages, step=1)
         start_idx = (page_num - 1) * page_size
-        st.dataframe(df.iloc[start_idx:start_idx + page_size], use_container_width=True)
+        st.dataframe(df.iloc[start_idx:start_idx + page_size].reset_index(drop=True), use_container_width=True)
 
         col1, col2 = st.columns([2, 1])
 
