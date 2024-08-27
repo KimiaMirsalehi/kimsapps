@@ -48,17 +48,11 @@ def apply_theme(theme):
             }
             [data-testid="stSidebar"] {
                 background-color: #483248;
+                color: white;
             }
-            [data-testid="stSidebarNav"] * {
-                color: white !important;
-            }
-            [data-testid="stSidebarNav"] svg {
-                color: white !important;
-            }
-            [data-testid="stSidebar"] .css-1d391kg, 
-            [data-testid="stSidebar"] .css-10trblm, 
-            [data-testid="stSidebar"] .css-1avcm0n {
-                color: white !important;
+            [data-testid="stSidebarNav"] a, 
+            [data-testid="stSidebarNav"] div {
+                color: white;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -128,6 +122,8 @@ def display_dashboard():
         total_pages = len(df) // page_size + 1
         page_num = st.sidebar.number_input("Page", min_value=1, max_value=total_pages, step=1)
         start_idx = (page_num - 1) * page_size
+        
+        # Updated to remove index
         st.dataframe(df.iloc[start_idx:start_idx + page_size].reset_index(drop=True), use_container_width=True)
 
         col1, col2 = st.columns([2, 1])
