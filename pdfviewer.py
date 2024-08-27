@@ -124,7 +124,9 @@ def display_dashboard():
         start_idx = (page_num - 1) * page_size
         
         # Updated to remove index
+        # Resetting the index to remove the default index and avoid showing it in the dataframe
         st.dataframe(df.iloc[start_idx:start_idx + page_size].reset_index(drop=True), use_container_width=True)
+
 
         col1, col2 = st.columns([2, 1])
 
