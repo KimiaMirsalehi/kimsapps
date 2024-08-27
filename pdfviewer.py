@@ -48,9 +48,16 @@ def apply_theme(theme):
             }
             [data-testid="stSidebar"] {
                 background-color: #483248;
-                color: white;
             }
             [data-testid="stSidebarNav"] * {
+                color: white !important;
+            }
+            [data-testid="stSidebarNav"] svg {
+                color: white !important;
+            }
+            [data-testid="stSidebar"] .css-1d391kg, 
+            [data-testid="stSidebar"] .css-10trblm, 
+            [data-testid="stSidebar"] .css-1avcm0n {
                 color: white !important;
             }
             </style>
