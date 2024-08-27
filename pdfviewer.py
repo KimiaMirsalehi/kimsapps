@@ -48,11 +48,11 @@ def apply_theme(theme):
             }
             [data-testid="stSidebar"] {
                 background-color: #483248;
-                color: white;
+                color: #FFFFFF;
             }
             [data-testid="stSidebarNav"] a, 
             [data-testid="stSidebarNav"] div {
-                color: white;
+                color: #FFFFFF;
             }
             </style>
             """, unsafe_allow_html=True)
