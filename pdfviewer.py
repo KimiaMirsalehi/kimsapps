@@ -76,8 +76,6 @@ def apply_theme(theme):
             </style>
             """, unsafe_allow_html=True)
 
-
-
 def display_pdf(file_path, zoom_level):
     doc = fitz.open(file_path)
     num_pages = len(doc)
@@ -99,25 +97,45 @@ def display_pdf(file_path, zoom_level):
         if st.button("Next") and st.session_state.page_num < num_pages - 1:
             st.session_state.page_num += 1
 
-    notes_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_notes.json")
-    annotations = ""
-    if os.path.exists(notes_file):
-        with open(notes_file, 'r') as f:
-            saved_notes = json.load(f)
-            annotations = saved_notes.get(str(st.session_state.page_num), "")
+    comments_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_comments.json")
+
+    # Load existing comments
+    comments = []
+    if os.path.exists(comments_file):
+        with open(comments_file, 'r') as f:
+            comments = json.load(f).get(str(st.session_state.page_num), [])
+
+    # Comment form
+    st.subheader("Leave a Comment")
+    name = st.text_input("Your Name")
+    comment = st.text_area("Your Comment")
     
-    st.text_area("Add your notes here", value=annotations, key="annotation")
-    if st.button("Save Note"):
-        if os.path.exists(notes_file):
-            with open(notes_file, 'r') as f:
-                saved_notes = json.load(f)
+    if st.button("Submit Comment"):
+        if not name or not comment:
+            st.warning("Please enter both your name and a comment.")
         else:
-            saved_notes = {}
-        
-        saved_notes[str(st.session_state.page_num)] = st.session_state.annotation
-        with open(notes_file, 'w') as f:
-            json.dump(saved_notes, f)
-        st.success("Note saved!")
+            new_comment = {"name": name, "comment": comment}
+            comments.append(new_comment)
+            
+            # Save updated comments
+            all_comments = {}
+            if os.path.exists(comments_file):
+                with open(comments_file, 'r') as f:
+                    all_comments = json.load(f)
+            all_comments[str(st.session_state.page_num)] = comments
+            with open(comments_file, 'w') as f:
+                json.dump(all_comments, f)
+            
+            st.success("Comment submitted!")
+
+    # Display comments
+    st.subheader("Comments")
+    if comments:
+        for c in comments:
+            st.markdown(f"**{c['name']}**: {c['comment']}")
+            st.markdown("---")
+    else:
+        st.write("No comments yet.")
 
 def display_dashboard():
     if os.path.exists(EXCEL_FILE):
@@ -131,11 +149,7 @@ def display_dashboard():
         page_num = st.sidebar.number_input("Page", min_value=1, max_value=total_pages, step=1)
         start_idx = (page_num - 1) * page_size
         
-        # Updated to remove index
-        # Resetting the index to remove the default index and avoid showing it in the dataframe
-        # Using st.table with style applied to hide the index
         st.table(df.iloc[start_idx:start_idx + page_size].reset_index(drop=True).style.hide(axis='index'))
-
 
         col1, col2 = st.columns([2, 1])
 
@@ -175,7 +189,7 @@ def display_settings():
 
     # Initialize default theme in session state if it doesn't exist
     if 'default_theme' not in st.session_state:
-        st.session_state.default_theme = "Default"  # Default to the specified default theme
+        st.session_state.default_theme = "Default"
 
     theme = st.radio("Theme", ["Default", "Light", "Dark"], index=["Default", "Light", "Dark"].index(st.session_state.default_theme))
 
@@ -196,7 +210,7 @@ def main():
 
     # Ensure default theme is applied on app load
     if 'default_theme' not in st.session_state:
-        st.session_state.default_theme = "Default"  # This should be set to your desired default theme if it doesn't exist
+        st.session_state.default_theme = "Default"
 
     apply_theme(st.session_state.default_theme)
 
