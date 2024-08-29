@@ -52,7 +52,10 @@ def apply_theme(theme):
             }
             [data-testid="stSidebarNav"] a, 
             [data-testid="stSidebarNav"] div,
-            [data-testid="stSidebar"] .css-1cpxqw2 {
+            [data-testid="stSidebar"] .css-1cpxqw2,
+            [data-testid="stSidebar"] .css-1vbd788,
+            [data-testid="stSidebar"] .css-1yy6isu,
+            [data-testid="stSidebar"] .css-qbe2hs {
                 color: #C0C0C0 !important;
             }
             [data-testid="stSidebar"] .stRadio > label {
