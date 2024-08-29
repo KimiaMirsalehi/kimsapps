@@ -55,7 +55,10 @@ def apply_theme(theme):
             [data-testid="stSidebar"] .css-1cpxqw2,
             [data-testid="stSidebar"] .css-1vbd788,
             [data-testid="stSidebar"] .css-1yy6isu,
-            [data-testid="stSidebar"] .css-qbe2hs {
+            [data-testid="stSidebar"] .css-qbe2hs,
+            [data-testid="stSidebar"] .css-1d391kg,
+            [data-testid="stSidebar"] .css-1xarl3l,
+            [data-testid="stSidebar"] .css-k0sv6k {
                 color: #C0C0C0 !important;
             }
             [data-testid="stSidebar"] .stRadio > label {
@@ -76,6 +79,7 @@ def apply_theme(theme):
             }
             </style>
             """, unsafe_allow_html=True)
+
 
 def display_pdf(file_path, zoom_level):
     doc = fitz.open(file_path)
