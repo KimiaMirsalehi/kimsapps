@@ -97,13 +97,11 @@ def display_pdf(file_path, zoom_level):
         if st.button("Next") and st.session_state.page_num < num_pages - 1:
             st.session_state.page_num += 1
 
+    # Comments
     comments_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_comments.json")
-
-    # Ensure the JSON_FOLDER directory exists
     if not os.path.exists(JSON_FOLDER):
         os.makedirs(JSON_FOLDER)
 
-    # Load existing comments
     comments = []
     if os.path.exists(comments_file):
         with open(comments_file, 'r') as f:
@@ -113,15 +111,13 @@ def display_pdf(file_path, zoom_level):
     st.subheader("Leave a Comment")
     name = st.text_input("Your Name")
     comment = st.text_area("Your Comment")
-    
+
     if st.button("Submit Comment"):
         if not name or not comment:
             st.warning("Please enter both your name and a comment.")
         else:
-            new_comment = {"name": name, "comment": comment}
+            new_comment = {"name": name, "comment": comment, "votes": 0}
             comments.append(new_comment)
-            
-            # Save updated comments
             all_comments = {}
             if os.path.exists(comments_file):
                 with open(comments_file, 'r') as f:
@@ -129,17 +125,58 @@ def display_pdf(file_path, zoom_level):
             all_comments[str(st.session_state.page_num)] = comments
             with open(comments_file, 'w') as f:
                 json.dump(all_comments, f)
-            
             st.success("Comment submitted!")
 
-    # Display comments
+    # Display comments with voting
     st.subheader("Comments")
     if comments:
-        for c in comments:
+        for i, c in enumerate(comments):
             st.markdown(f"**{c['name']}**: {c['comment']}")
+            col1, col2, col3 = st.columns([1, 0.2, 1])
+            if col1.button('👍', key=f'up_{i}'):
+                c['votes'] += 1
+                with open(comments_file, 'w') as f:
+                    json.dump(all_comments, f)
+            col2.write(c['votes'])
+            if col3.button('👎', key=f'down_{i}'):
+                c['votes'] -= 1
+                with open(comments_file, 'w') as f:
+                    json.dump(all_comments, f)
             st.markdown("---")
     else:
         st.write("No comments yet.")
+
+    # PDF Votes
+    votes_file = os.path.join(JSON_FOLDER, "pdf_votes.json")
+    if os.path.exists(votes_file):
+        with open(votes_file, 'r') as f:
+            votes = json.load(f)
+    else:
+        votes = {}
+
+    pdf_name = os.path.basename(file_path)
+    current_votes = votes.get(pdf_name, 0)
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col1:
+        if st.button("👍 Upvote PDF"):
+            current_votes += 1
+            votes[pdf_name] = current_votes
+            with open(votes_file, 'w') as f:
+                json.dump(votes, f)
+            st.success(f"Upvoted! Current Votes: {current_votes}")
+    with col2:
+        st.write(f"Votes: {current_votes}")
+    with col3:
+        if st.button("👎 Downvote PDF"):
+            current_votes -= 1
+            votes[pdf_name] = current_votes
+            with open(votes_file, 'w') as f:
+                json.dump(votes, f)
+            st.success(f"Downvoted! Current Votes: {current_votes}")
+
+    st.write(f"Current votes for this PDF: {current_votes}")
+
 
 
 def display_dashboard():
@@ -153,18 +190,48 @@ def display_dashboard():
         total_pages = len(df) // page_size + 1
         page_num = st.sidebar.number_input("Page", min_value=1, max_value=total_pages, step=1)
         start_idx = (page_num - 1) * page_size
-        
+
         st.table(df.iloc[start_idx:start_idx + page_size].reset_index(drop=True).style.hide(axis='index'))
 
         col1, col2 = st.columns([2, 1])
 
         with col1:
             st.subheader("Available PDF Files")
-            available_pdfs = [f for f in list_files() if f.endswith('.pdf')]
+            available_pdfs = list_files()
+
+            # Load votes from JSON
+            votes_file = os.path.join(JSON_FOLDER, "pdf_votes.json")
+            if os.path.exists(votes_file):
+                with open(votes_file, 'r') as f:
+                    votes = json.load(f)
+            else:
+                votes = {}
+
             for pdf in available_pdfs:
+                pdf_name = os.path.basename(pdf)
+                current_votes = votes.get(pdf_name, 0)
+
                 if st.button(pdf, key=pdf):
                     st.session_state.selected_file = pdf
                     st.session_state.page = "Document Library"
+
+                st.write(f"Votes: {current_votes}")
+                col1, col2, col3 = st.columns([1, 1, 1])
+                with col1:
+                    if st.button(f"👍 Upvote {pdf}", key=f'up_{pdf}'):
+                        votes[pdf_name] = votes.get(pdf_name, 0) + 1
+                        with open(votes_file, 'w') as f:
+                            json.dump(votes, f)
+                        st.success(f"Upvoted! Current Votes: {votes[pdf_name]}")
+                with col2:
+                    st.write(f"Votes: {votes[pdf_name]}")
+                with col3:
+                    if st.button(f"👎 Downvote {pdf}", key=f'down_{pdf}'):
+                        votes[pdf_name] = votes.get(pdf_name, 0) - 1
+                        with open(votes_file, 'w') as f:
+                            json.dump(votes, f)
+                        st.success(f"Downvoted! Current Votes: {votes[pdf_name]}")
+                st.markdown("---")
 
         with col2:
             st.subheader("Source Distribution")
@@ -187,6 +254,7 @@ def display_dashboard():
             st.pyplot(fig)
     else:
         st.error(f"Excel file not found at {EXCEL_FILE}")
+
 
 def display_settings():
     st.title("Settings")
