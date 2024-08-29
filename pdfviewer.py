@@ -239,11 +239,12 @@ def display_settings():
     st.write(f"Files will be saved to: {save_location}")
 
 def main():
-    st.set_page_config(page_title="Dashboard", layout="wide")
+    # Set the page configuration with a custom title
+    st.set_page_config(page_title="Kim's PDF Viewer", layout="wide")
 
     # Ensure default theme is applied on app load
     if 'default_theme' not in st.session_state:
-        st.session_state.default_theme = "Default"
+        st.session_state.default_theme = "Default"  # This should be set to your desired default theme if it doesn't exist
 
     apply_theme(st.session_state.default_theme)
 
