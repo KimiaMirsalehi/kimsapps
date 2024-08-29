@@ -239,14 +239,12 @@ def display_settings():
 
     apply_theme(theme)
 
-    # Slider for default zoom level
-    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, st.session_state.default_zoom, 0.1)
-    if default_zoom != st.session_state.default_zoom:
-        st.session_state.default_zoom = default_zoom
-        st.success(f"Default zoom level set to: {default_zoom}")
+    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 5.0, 0.1)
+    st.write(f"Default zoom level set to: {default_zoom}")
 
     save_location = st.text_input("Notes' Default Save Location", JSON_FOLDER)
     st.write(f"Files will be saved to: {save_location}")
+
 
 def main():
     # Set the page configuration with a custom title
