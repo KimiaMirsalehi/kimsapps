@@ -190,6 +190,7 @@ def display_dashboard():
         page_num = st.sidebar.number_input("Page", min_value=1, max_value=total_pages, step=1)
         start_idx = (page_num - 1) * page_size
 
+        # Display data from Excel without index
         st.table(df.iloc[start_idx:start_idx + page_size].reset_index(drop=True).style.hide(axis='index'))
 
         col1, col2 = st.columns([2, 1])
@@ -197,40 +198,10 @@ def display_dashboard():
         with col1:
             st.subheader("Available PDF Files")
             available_pdfs = list_files()
-
-            # Load votes from JSON
-            votes_file = os.path.join(JSON_FOLDER, "pdf_votes.json")
-            if os.path.exists(votes_file):
-                with open(votes_file, 'r') as f:
-                    votes = json.load(f)
-            else:
-                votes = {}
-
             for pdf in available_pdfs:
-                pdf_name = os.path.basename(pdf)
-                current_votes = votes.get(pdf_name, 0)  # Use .get() to avoid KeyError
-
                 if st.button(pdf, key=pdf):
                     st.session_state.selected_file = pdf
                     st.session_state.page = "Document Library"
-
-                st.write(f"Votes: {current_votes}")
-                col1, col2, col3 = st.columns([1, 1, 1])
-                with col1:
-                    if st.button(f"👍 Upvote {pdf}", key=f'up_{pdf}'):
-                        votes[pdf_name] = votes.get(pdf_name, 0) + 1
-                        with open(votes_file, 'w') as f:
-                            json.dump(votes, f)
-                        st.success(f"Upvoted! Current Votes: {votes[pdf_name]}")
-                with col2:
-                    st.write(f"Votes: {votes[pdf_name]}")
-                with col3:
-                    if st.button(f"👎 Downvote {pdf}", key=f'down_{pdf}'):
-                        votes[pdf_name] = votes.get(pdf_name, 0) - 1
-                        with open(votes_file, 'w') as f:
-                            json.dump(votes, f)
-                        st.success(f"Downvoted! Current Votes: {votes[pdf_name]}")
-                st.markdown("---")
 
         with col2:
             st.subheader("Source Distribution")
@@ -253,7 +224,6 @@ def display_dashboard():
             st.pyplot(fig)
     else:
         st.error(f"Excel file not found at {EXCEL_FILE}")
-
 
 
 def display_settings():
