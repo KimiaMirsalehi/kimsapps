@@ -31,11 +31,18 @@ def apply_theme(theme):
                 background-color: white;
             }
             [data-testid="stSidebar"] {
-                background-color: #D8BFD8;
+                background-color: #D6EAf8;
                 color: black;
             }
-            [data-testid="stSidebarNav"] {
-                color: black;
+            [data-testid="stSidebar"] *,
+            [data-testid="stSidebarNav"] a, 
+            [data-testid="stSidebarNav"] div,
+            [data-testid="stSidebar"] .stButton > button,
+            [data-testid="stSidebar"] .stRadio > label,
+            [data-testid="stSidebar"] .stCheckbox > label,
+            [data-testid="stSidebar"] .stSelectbox > label,
+            [data-testid="stSidebar"] .stTextInput > label {
+                color: black !important;
             }
             </style>
             """, unsafe_allow_html=True)
