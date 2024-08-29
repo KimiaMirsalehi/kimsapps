@@ -31,7 +31,7 @@ def apply_theme(theme):
                 background-color: white;
             }
             [data-testid="stSidebar"] {
-                background-color: #D6EAf8;
+                background-color: #f5eef8;
                 color: black;
             }
             [data-testid="stSidebar"] *,
