@@ -51,7 +51,11 @@ def apply_theme(theme):
                 color: #C0C0C0;
             }
             [data-testid="stSidebarNav"] a, 
-            [data-testid="stSidebarNav"] div {
+            [data-testid="stSidebarNav"] div,
+            [data-testid="stSidebar"] .css-1cpxqw2 {
+                color: #C0C0C0 !important;
+            }
+            [data-testid="stSidebar"] .stRadio > label {
                 color: #C0C0C0;
             }
             </style>
