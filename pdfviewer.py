@@ -239,8 +239,11 @@ def display_settings():
 
     apply_theme(theme)
 
-    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, 5.0, 0.1)
-    st.write(f"Default zoom level set to: {default_zoom}")
+    # Slider for default zoom level
+    default_zoom = st.slider("Default Zoom Level", 1.0, 5.0, st.session_state.default_zoom, 0.1)
+    if default_zoom != st.session_state.default_zoom:
+        st.session_state.default_zoom = default_zoom
+        st.success(f"Default zoom level set to: {default_zoom}")
 
     save_location = st.text_input("Notes' Default Save Location", JSON_FOLDER)
     st.write(f"Files will be saved to: {save_location}")
@@ -282,7 +285,7 @@ def main():
             if st.session_state.selected_file.lower().endswith('.pdf'):
                 st.sidebar.header("View Options")
                 zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 5.0, 0.1)
-                display_pdf(file_path, zoom_level)
+                display_pdf(file_path, st.session_state.default_zoom)
             else:
                 st.error("Unsupported file type")
     elif st.session_state.page == "Settings":
