@@ -137,7 +137,7 @@ def display_pdf(file_path, zoom_level):
                 c['votes'] += 1
                 with open(comments_file, 'w') as f:
                     json.dump(all_comments, f)
-            col2.write(c['votes'])
+            col2.write(c.get('votes', 0))  # Use .get() to avoid KeyError
             if col3.button('👎', key=f'down_{i}'):
                 c['votes'] -= 1
                 with open(comments_file, 'w') as f:
@@ -155,7 +155,7 @@ def display_pdf(file_path, zoom_level):
         votes = {}
 
     pdf_name = os.path.basename(file_path)
-    current_votes = votes.get(pdf_name, 0)
+    current_votes = votes.get(pdf_name, 0)  # Use .get() to avoid KeyError
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
@@ -176,7 +176,6 @@ def display_pdf(file_path, zoom_level):
             st.success(f"Downvoted! Current Votes: {current_votes}")
 
     st.write(f"Current votes for this PDF: {current_votes}")
-
 
 
 def display_dashboard():
@@ -209,7 +208,7 @@ def display_dashboard():
 
             for pdf in available_pdfs:
                 pdf_name = os.path.basename(pdf)
-                current_votes = votes.get(pdf_name, 0)
+                current_votes = votes.get(pdf_name, 0)  # Use .get() to avoid KeyError
 
                 if st.button(pdf, key=pdf):
                     st.session_state.selected_file = pdf
@@ -254,6 +253,7 @@ def display_dashboard():
             st.pyplot(fig)
     else:
         st.error(f"Excel file not found at {EXCEL_FILE}")
+
 
 
 def display_settings():
