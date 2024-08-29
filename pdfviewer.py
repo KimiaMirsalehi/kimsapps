@@ -240,7 +240,12 @@ def display_settings():
 
 def main():
     # Set the page configuration with a custom title
-    st.set_page_config(page_title="Kim's PDF Viewer", layout="wide")
+    st.set_page_config(
+    page_title="Kim's PDF Viewer",
+    page_icon=":skull:",  # You can set a Unicode emoji or provide a path to an image
+    layout="wide"  # Options: "centered" or "wide"
+)
+
 
     # Ensure default theme is applied on app load
     if 'default_theme' not in st.session_state:
