@@ -99,6 +99,10 @@ def display_pdf(file_path, zoom_level):
 
     comments_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_comments.json")
 
+    # Ensure the JSON_FOLDER directory exists
+    if not os.path.exists(JSON_FOLDER):
+        os.makedirs(JSON_FOLDER)
+
     # Load existing comments
     comments = []
     if os.path.exists(comments_file):
@@ -136,6 +140,7 @@ def display_pdf(file_path, zoom_level):
             st.markdown("---")
     else:
         st.write("No comments yet.")
+
 
 def display_dashboard():
     if os.path.exists(EXCEL_FILE):
