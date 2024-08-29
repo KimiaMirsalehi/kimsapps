@@ -99,11 +99,10 @@ def display_pdf(file_path, zoom_level):
 
     comments_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_comments.json")
 
-    # Ensure the JSON_FOLDER directory exists
     if not os.path.exists(JSON_FOLDER):
         os.makedirs(JSON_FOLDER)
 
-    # Load existing comments
+    # Load existing comments and votes
     comments = []
     if os.path.exists(comments_file):
         with open(comments_file, 'r') as f:
@@ -118,7 +117,7 @@ def display_pdf(file_path, zoom_level):
         if not name or not comment:
             st.warning("Please enter both your name and a comment.")
         else:
-            new_comment = {"name": name, "comment": comment}
+            new_comment = {"name": name, "comment": comment, "votes": 0}
             comments.append(new_comment)
             
             # Save updated comments
@@ -132,11 +131,21 @@ def display_pdf(file_path, zoom_level):
             
             st.success("Comment submitted!")
 
-    # Display comments
+    # Display comments with voting
     st.subheader("Comments")
     if comments:
-        for c in comments:
+        for i, c in enumerate(comments):
             st.markdown(f"**{c['name']}**: {c['comment']}")
+            col1, col2, col3 = st.columns([1, 0.2, 1])
+            if col1.button('👍', key=f'up_{i}'):
+                c['votes'] += 1
+                with open(comments_file, 'w') as f:
+                    json.dump(all_comments, f)
+            col2.write(c['votes'])
+            if col3.button('👎', key=f'down_{i}'):
+                c['votes'] -= 1
+                with open(comments_file, 'w') as f:
+                    json.dump(all_comments, f)
             st.markdown("---")
     else:
         st.write("No comments yet.")
