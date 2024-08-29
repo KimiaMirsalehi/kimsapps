@@ -218,11 +218,16 @@ def display_settings():
     st.write(f"Files will be saved to: {save_location}")
 
 def main():
-    st.set_page_config(page_title="Dashboard", layout="wide")
+    # Set the page configuration with a custom title
+    st.set_page_config(
+        page_title="Kim's PDF Viewer",
+        page_icon=":skull:",  # You can set a Unicode emoji or provide a path to an image
+        layout="wide"  # Options: "centered" or "wide"
+    )
 
     # Ensure default theme is applied on app load
     if 'default_theme' not in st.session_state:
-        st.session_state.default_theme = "Default"
+        st.session_state.default_theme = "Default"  # This should be set to your desired default theme if it doesn't exist
 
     apply_theme(st.session_state.default_theme)
 
@@ -237,8 +242,11 @@ def main():
     elif st.session_state.page == "Document Library":
         files = list_files()
         selected_file = st.sidebar.selectbox("Select a file", files)
-        if selected_file:
+        
+        # Reset page number when a new file is selected
+        if selected_file and selected_file != st.session_state.get('selected_file'):
             st.session_state.selected_file = selected_file
+            st.session_state.page_num = 0  # Reset the page number to 0 when a new document is selected
 
         if st.session_state.get('selected_file'):
             st.title("Regulation Viewer")
