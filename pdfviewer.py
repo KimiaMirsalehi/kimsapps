@@ -116,7 +116,7 @@ def display_pdf(file_path, zoom_level):
         if not name or not comment:
             st.warning("Please enter both your name and a comment.")
         else:
-            new_comment = {"name": name, "comment": comment, "votes": 0}
+            new_comment = {"name": name, "comment": comment}
             comments.append(new_comment)
             all_comments = {}
             if os.path.exists(comments_file):
@@ -127,21 +127,11 @@ def display_pdf(file_path, zoom_level):
                 json.dump(all_comments, f)
             st.success("Comment submitted!")
 
-    # Display comments with voting
+    # Display comments without voting
     st.subheader("Comments")
     if comments:
-        for i, c in enumerate(comments):
+        for c in comments:
             st.markdown(f"**{c['name']}**: {c['comment']}")
-            col1, col2, col3 = st.columns([1, 0.2, 1])
-            if col1.button('👍', key=f'up_{i}'):
-                c['votes'] += 1
-                with open(comments_file, 'w') as f:
-                    json.dump(all_comments, f)
-            col2.write(c.get('votes', 0))  # Use .get() to avoid KeyError
-            if col3.button('👎', key=f'down_{i}'):
-                c['votes'] -= 1
-                with open(comments_file, 'w') as f:
-                    json.dump(all_comments, f)
             st.markdown("---")
     else:
         st.write("No comments yet.")
