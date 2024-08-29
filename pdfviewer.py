@@ -104,11 +104,13 @@ def display_pdf(file_path, zoom_level):
         if st.button("Next") and st.session_state.page_num < num_pages - 1:
             st.session_state.page_num += 1
 
-    # Comments
     comments_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_comments.json")
+
+    # Ensure the JSON_FOLDER directory exists
     if not os.path.exists(JSON_FOLDER):
         os.makedirs(JSON_FOLDER)
 
+    # Load existing comments
     comments = []
     if os.path.exists(comments_file):
         with open(comments_file, 'r') as f:
@@ -118,13 +120,15 @@ def display_pdf(file_path, zoom_level):
     st.subheader("Leave a Comment")
     name = st.text_input("Your Name")
     comment = st.text_area("Your Comment")
-
+    
     if st.button("Submit Comment"):
         if not name or not comment:
             st.warning("Please enter both your name and a comment.")
         else:
             new_comment = {"name": name, "comment": comment}
             comments.append(new_comment)
+            
+            # Save updated comments
             all_comments = {}
             if os.path.exists(comments_file):
                 with open(comments_file, 'r') as f:
@@ -132,9 +136,10 @@ def display_pdf(file_path, zoom_level):
             all_comments[str(st.session_state.page_num)] = comments
             with open(comments_file, 'w') as f:
                 json.dump(all_comments, f)
+            
             st.success("Comment submitted!")
 
-    # Display comments without voting
+    # Display comments
     st.subheader("Comments")
     if comments:
         for c in comments:
@@ -142,37 +147,6 @@ def display_pdf(file_path, zoom_level):
             st.markdown("---")
     else:
         st.write("No comments yet.")
-
-    # PDF Votes
-    votes_file = os.path.join(JSON_FOLDER, "pdf_votes.json")
-    if os.path.exists(votes_file):
-        with open(votes_file, 'r') as f:
-            votes = json.load(f)
-    else:
-        votes = {}
-
-    pdf_name = os.path.basename(file_path)
-    current_votes = votes.get(pdf_name, 0)  # Use .get() to avoid KeyError
-
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col1:
-        if st.button("👍 Upvote PDF"):
-            current_votes += 1
-            votes[pdf_name] = current_votes
-            with open(votes_file, 'w') as f:
-                json.dump(votes, f)
-            st.success(f"Upvoted! Current Votes: {current_votes}")
-    with col2:
-        st.write(f"Votes: {current_votes}")
-    with col3:
-        if st.button("👎 Downvote PDF"):
-            current_votes -= 1
-            votes[pdf_name] = current_votes
-            with open(votes_file, 'w') as f:
-                json.dump(votes, f)
-            st.success(f"Downvoted! Current Votes: {current_votes}")
-
-    st.write(f"Current votes for this PDF: {current_votes}")
 
 
 def display_dashboard():
@@ -186,15 +160,14 @@ def display_dashboard():
         total_pages = len(df) // page_size + 1
         page_num = st.sidebar.number_input("Page", min_value=1, max_value=total_pages, step=1)
         start_idx = (page_num - 1) * page_size
-
-        # Display data from Excel without index
+        
         st.table(df.iloc[start_idx:start_idx + page_size].reset_index(drop=True).style.hide(axis='index'))
 
         col1, col2 = st.columns([2, 1])
 
         with col1:
             st.subheader("Available PDF Files")
-            available_pdfs = list_files()
+            available_pdfs = [f for f in list_files() if f.endswith('.pdf')]
             for pdf in available_pdfs:
                 if st.button(pdf, key=pdf):
                     st.session_state.selected_file = pdf
@@ -222,7 +195,6 @@ def display_dashboard():
     else:
         st.error(f"Excel file not found at {EXCEL_FILE}")
 
-
 def display_settings():
     st.title("Settings")
     st.write("Adjust your preferences below:")
@@ -245,18 +217,12 @@ def display_settings():
     save_location = st.text_input("Notes' Default Save Location", JSON_FOLDER)
     st.write(f"Files will be saved to: {save_location}")
 
-
 def main():
-    # Set the page configuration with a custom title
-    st.set_page_config(
-        page_title="Kim's PDF Viewer",
-        page_icon=":skull:",  # You can set a Unicode emoji or provide a path to an image
-        layout="wide"  # Options: "centered" or "wide"
-    )
+    st.set_page_config(page_title="Dashboard", layout="wide")
 
     # Ensure default theme is applied on app load
     if 'default_theme' not in st.session_state:
-        st.session_state.default_theme = "Default"  # This should be set to your desired default theme if it doesn't exist
+        st.session_state.default_theme = "Default"
 
     apply_theme(st.session_state.default_theme)
 
@@ -271,11 +237,8 @@ def main():
     elif st.session_state.page == "Document Library":
         files = list_files()
         selected_file = st.sidebar.selectbox("Select a file", files)
-        
-        # Reset page number when a new file is selected
-        if selected_file and selected_file != st.session_state.get('selected_file'):
+        if selected_file:
             st.session_state.selected_file = selected_file
-            st.session_state.page_num = 0  # Reset the page number to 0 when a new document is selected
 
         if st.session_state.get('selected_file'):
             st.title("Regulation Viewer")
@@ -283,7 +246,7 @@ def main():
             if st.session_state.selected_file.lower().endswith('.pdf'):
                 st.sidebar.header("View Options")
                 zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 5.0, 0.1)
-                display_pdf(file_path, st.session_state.default_zoom)
+                display_pdf(file_path, zoom_level)
             else:
                 st.error("Unsupported file type")
     elif st.session_state.page == "Settings":
