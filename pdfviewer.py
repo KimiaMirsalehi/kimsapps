@@ -18,12 +18,11 @@ def list_files():
 
 @st.cache_data
 def load_pdf(file_path):
-    """Load PDF once and cache it."""
-    return fitz.open(file_path)
+    """Return the file path to allow caching."""
+    return file_path
 
-@st.cache_data(show_spinner=False)
 def render_page_cached(doc, page_num, zoom_level):
-    """Render a specific page with caching."""
+    """Render a specific page without caching the entire document object."""
     page = doc.load_page(page_num)
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom_level, zoom_level))
     img = Image.open(io.BytesIO(pix.tobytes()))
@@ -91,7 +90,8 @@ def apply_theme(theme):
             </style>
             """, unsafe_allow_html=True)
 
-def display_pdf(doc, zoom_level):
+def display_pdf(file_path, zoom_level):
+    doc = fitz.open(file_path)
     num_pages = len(doc)
 
     if 'page_num' not in st.session_state:
@@ -112,7 +112,8 @@ def display_pdf(doc, zoom_level):
             st.session_state.page_num += 1
             st.experimental_rerun()
 
-    comments_file = os.path.join(JSON_FOLDER, f"{os.path.basename(doc.name)}_comments.json")
+    comments_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_comments.json")
+
 
     # Ensure the JSON_FOLDER directory exists
     if not os.path.exists(JSON_FOLDER):
@@ -253,13 +254,13 @@ def main():
         if selected_file and selected_file != st.session_state.get('selected_file'):
             st.session_state.selected_file = selected_file
             st.session_state.page_num = 0  # Reset the page number to 0 when a new document is selected
-            st.session_state.pdf_doc = load_pdf(os.path.join(FILE_FOLDER, selected_file))
+            st.session_state.pdf_doc_path = load_pdf(os.path.join(FILE_FOLDER, selected_file))
 
-        if st.session_state.get('pdf_doc'):
+        if st.session_state.get('pdf_doc_path'):
             st.title("Regulation Viewer")
             st.sidebar.header("View Options")
             zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 5.0, 0.1)
-            display_pdf(st.session_state.pdf_doc, zoom_level)
+            display_pdf(st.session_state.pdf_doc_path, zoom_level)
     elif st.session_state.page == "Settings":
         display_settings()
 
