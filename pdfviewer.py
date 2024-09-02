@@ -16,14 +16,7 @@ EXCEL_FILE = os.path.join(FILE_FOLDER, 'pdf_details.xlsx')
 def list_files():
     return [f for f in os.listdir(FILE_FOLDER) if f.endswith('.pdf') and os.path.isfile(os.path.join(FILE_FOLDER, f))]
 
-@st.cache_data
-def load_pdf(file_path):
-    """Return the file path to allow caching."""
-    return file_path
-
-def render_page_cached(doc, page_num, zoom_level):
-    """Render a specific page without caching the entire document object."""
-    page = doc.load_page(page_num)
+def render_page(page, zoom_level):
     pix = page.get_pixmap(matrix=fitz.Matrix(zoom_level, zoom_level))
     img = Image.open(io.BytesIO(pix.tobytes()))
     return img
@@ -97,23 +90,21 @@ def display_pdf(file_path, zoom_level):
     if 'page_num' not in st.session_state:
         st.session_state.page_num = 0
 
-    img = render_page_cached(doc, st.session_state.page_num, zoom_level)
+    page = doc.load_page(st.session_state.page_num)
+    img = render_page(page, zoom_level)
     st.image(img, caption=f"Page {st.session_state.page_num + 1}", use_column_width=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col1:
         if st.button("Previous") and st.session_state.page_num > 0:
             st.session_state.page_num -= 1
-            st.experimental_rerun()
     with col2:
         st.write(f"Page {st.session_state.page_num + 1} of {num_pages}")
     with col3:
         if st.button("Next") and st.session_state.page_num < num_pages - 1:
             st.session_state.page_num += 1
-            st.experimental_rerun()
 
     comments_file = os.path.join(JSON_FOLDER, f"{os.path.basename(file_path)}_comments.json")
-
 
     # Ensure the JSON_FOLDER directory exists
     if not os.path.exists(JSON_FOLDER):
@@ -246,21 +237,26 @@ def main():
         st.session_state.page = page
 
     if st.session_state.page == "Dashboard":
+        st.session_state.selected_file = None
         display_dashboard()
     elif st.session_state.page == "Document Library":
         files = list_files()
         selected_file = st.sidebar.selectbox("Select a file", files)
         
+        # Reset page number when a new file is selected
         if selected_file and selected_file != st.session_state.get('selected_file'):
             st.session_state.selected_file = selected_file
             st.session_state.page_num = 0  # Reset the page number to 0 when a new document is selected
-            st.session_state.pdf_doc_path = load_pdf(os.path.join(FILE_FOLDER, selected_file))
 
-        if st.session_state.get('pdf_doc_path'):
+        if st.session_state.get('selected_file'):
             st.title("Regulation Viewer")
-            st.sidebar.header("View Options")
-            zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 5.0, 0.1)
-            display_pdf(st.session_state.pdf_doc_path, zoom_level)
+            file_path = os.path.join(FILE_FOLDER, st.session_state.selected_file)
+            if st.session_state.selected_file.lower().endswith('.pdf'):
+                st.sidebar.header("View Options")
+                zoom_level = st.sidebar.slider("Zoom Level", 1.0, 5.0, 5.0, 0.1)
+                display_pdf(file_path, zoom_level)
+            else:
+                st.error("Unsupported file type")
     elif st.session_state.page == "Settings":
         display_settings()
 
