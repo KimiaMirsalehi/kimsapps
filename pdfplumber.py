@@ -3,12 +3,26 @@ import os
 import streamlit.components.v1 as components
 
 # Constants
-FILE_FOLDER = 'files'
-JSON_FOLDER = 'JSON_FILES'
+FILE_FOLDER = 'files'  # Ensure this folder exists and has the correct PDFs
+PDF_SERVER_FOLDER = 'static_files'
+
+# Ensure the PDF_SERVER_FOLDER exists
+if not os.path.exists(PDF_SERVER_FOLDER):
+    os.makedirs(PDF_SERVER_FOLDER)
 
 def list_files():
     """List PDF files in the FILE_FOLDER directory."""
     return [f for f in os.listdir(FILE_FOLDER) if f.endswith('.pdf') and os.path.isfile(os.path.join(FILE_FOLDER, f))]
+
+def copy_pdf_to_static_folder(pdf_filename):
+    """Copy the selected PDF to the static folder for serving."""
+    src = os.path.join(FILE_FOLDER, pdf_filename)
+    dst = os.path.join(PDF_SERVER_FOLDER, pdf_filename)
+    if not os.path.exists(dst):
+        with open(src, "rb") as src_file:
+            with open(dst, "wb") as dst_file:
+                dst_file.write(src_file.read())
+    return f"/{PDF_SERVER_FOLDER}/{pdf_filename}"
 
 def pdf_viewer(file_url):
     """Display the PDF using PDF.js in an iframe."""
@@ -31,28 +45,10 @@ def main():
         selected_file = st.sidebar.selectbox("Select a file", files)
         
         if selected_file:
-            file_path = os.path.join(FILE_FOLDER, selected_file)
-            # Serve the file via Streamlit's static file mechanism
-            file_url = f"/files/{selected_file}"
+            # Copy the PDF to the static folder
+            file_url = copy_pdf_to_static_folder(selected_file)
             st.subheader(f"Viewing: {selected_file}")
             pdf_viewer(file_url)
-
-# Set up file serving in the Streamlit app
-st.set_page_config(page_title="PDF Viewer with Highlights", layout="wide")
-# This line will allow serving files via a specific route in the Streamlit app
-st.markdown(
-    f"""
-    <style>
-    .reportview-container .main .block-container{{
-        padding-top: 2rem;
-        padding-right: 1rem;
-        padding-left: 1rem;
-        padding-bottom: 2rem;
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 if __name__ == "__main__":
     main()
