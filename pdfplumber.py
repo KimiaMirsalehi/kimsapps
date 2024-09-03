@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import shutil
 import streamlit.components.v1 as components
 
 # Constants
@@ -19,9 +20,7 @@ def copy_pdf_to_static_folder(pdf_filename):
     src = os.path.join(FILE_FOLDER, pdf_filename)
     dst = os.path.join(PDF_SERVER_FOLDER, pdf_filename)
     if not os.path.exists(dst):
-        with open(src, "rb") as src_file:
-            with open(dst, "wb") as dst_file:
-                dst_file.write(src_file.read())
+        shutil.copy(src, dst)
     file_url = f"/{PDF_SERVER_FOLDER}/{pdf_filename}"
     st.write(f"Debug: Source Path: {src}")
     st.write(f"Debug: Destination Path: {dst}")
@@ -56,3 +55,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
