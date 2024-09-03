@@ -1,14 +1,15 @@
 import streamlit as st
 import os
+import shutil
 import streamlit.components.v1 as components
 
-# Constants
-FILE_FOLDER = 'files'  # Ensure this folder exists and has the correct PDFs
-PDF_SERVER_FOLDER = 'static_files'
+# Define directories
+FILE_FOLDER = 'files'  # The folder where your PDFs are located
+STATIC_FOLDER = 'static'  # Static folder for serving files
 
-# Ensure the PDF_SERVER_FOLDER exists
-if not os.path.exists(PDF_SERVER_FOLDER):
-    os.makedirs(PDF_SERVER_FOLDER)
+# Ensure the STATIC_FOLDER exists
+if not os.path.exists(STATIC_FOLDER):
+    os.makedirs(STATIC_FOLDER)
 
 def list_files():
     """List PDF files in the FILE_FOLDER directory."""
@@ -17,12 +18,11 @@ def list_files():
 def copy_pdf_to_static_folder(pdf_filename):
     """Copy the selected PDF to the static folder for serving."""
     src = os.path.join(FILE_FOLDER, pdf_filename)
-    dst = os.path.join(PDF_SERVER_FOLDER, pdf_filename)
+    dst = os.path.join(STATIC_FOLDER, pdf_filename)
     if not os.path.exists(dst):
-        with open(src, "rb") as src_file:
-            with open(dst, "wb") as dst_file:
-                dst_file.write(src_file.read())
-    file_url = f"/{PDF_SERVER_FOLDER}/{pdf_filename}"
+        shutil.copyfile(src, dst)
+    # Return the relative URL path to the copied file
+    file_url = f"{STATIC_FOLDER}/{pdf_filename}"
     st.write(f"Debug: Source Path: {src}")
     st.write(f"Debug: Destination Path: {dst}")
     st.write(f"Debug: File URL: {file_url}")
@@ -31,7 +31,7 @@ def copy_pdf_to_static_folder(pdf_filename):
 def pdf_viewer(file_url):
     """Display the PDF using PDF.js in an iframe."""
     pdf_display = f"""
-        <iframe src="https://mozilla.github.io/pdf.js/web/viewer.html?file={file_url}" width="100%" height="800px">
+        <iframe src="https://mozilla.github.io/pdf.js/web/viewer.html?file=/{file_url}" width="100%" height="800px">
         </iframe>
     """
     components.html(pdf_display, height=800)
