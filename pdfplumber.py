@@ -1,37 +1,31 @@
 import streamlit as st
 import os
-import shutil
 
-# Define directories
+# Path where PDFs are located
 FILE_FOLDER = 'files'
-STATIC_FOLDER = 'static'
-
-# Ensure the STATIC_FOLDER exists
-if not os.path.exists(STATIC_FOLDER):
-    os.makedirs(STATIC_FOLDER)
 
 def list_files():
     return [f for f in os.listdir(FILE_FOLDER) if f.endswith('.pdf')]
 
-def copy_file_to_static(pdf_filename):
-    src = os.path.join(FILE_FOLDER, pdf_filename)
-    dst = os.path.join(STATIC_FOLDER, pdf_filename)
-    if not os.path.exists(dst):
-        shutil.copyfile(src, dst)
-    file_url = f"/{STATIC_FOLDER}/{pdf_filename}"
-    st.write(f"File URL: {file_url}")
-    return file_url
+def get_file_path(pdf_filename):
+    return os.path.join(FILE_FOLDER, pdf_filename)
 
 def main():
-    st.title("PDF Viewer Debugging")
+    st.title("PDF Viewer - Direct Load Test")
 
     files = list_files()
     selected_file = st.selectbox("Select a PDF file", files)
 
     if selected_file:
-        file_url = copy_file_to_static(selected_file)
-        st.write(f"PDF URL: {file_url}")
-        st.markdown(f"[Open PDF]({file_url})")
+        file_path = get_file_path(selected_file)
+        st.write(f"File Path: {file_path}")
+        try:
+            with open(file_path, "rb") as f:
+                base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="700" height="1000" type="application/pdf">'
+                st.markdown(pdf_display, unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"Error loading file: {e}")
 
 if __name__ == "__main__":
     main()
