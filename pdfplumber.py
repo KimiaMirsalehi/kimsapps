@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import base64
 
 # Path where PDFs are located
 FILE_FOLDER = 'files'
