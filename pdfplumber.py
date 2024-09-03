@@ -22,7 +22,11 @@ def copy_pdf_to_static_folder(pdf_filename):
         with open(src, "rb") as src_file:
             with open(dst, "wb") as dst_file:
                 dst_file.write(src_file.read())
-    return f"/{PDF_SERVER_FOLDER}/{pdf_filename}"
+    file_url = f"/{PDF_SERVER_FOLDER}/{pdf_filename}"
+    st.write(f"Debug: Source Path: {src}")
+    st.write(f"Debug: Destination Path: {dst}")
+    st.write(f"Debug: File URL: {file_url}")
+    return file_url
 
 def pdf_viewer(file_url):
     """Display the PDF using PDF.js in an iframe."""
