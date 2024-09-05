@@ -9,13 +9,14 @@ def list_files():
     return [f for f in os.listdir(FILE_FOLDER) if f.endswith('.pdf') and os.path.isfile(os.path.join(FILE_FOLDER, f))]
 
 def pdf_viewer(file_path):
-    """Display the PDF directly using Streamlit's built-in method."""
-    with open(file_path, "rb") as f:
-        # Display the PDF in the app
-        st.download_button(label="Download PDF", data=f, file_name=os.path.basename(file_path), mime="application/pdf")
-        st.write("### PDF Preview")
-        st.download_button(label="Preview PDF", data=f, file_name=os.path.basename(file_path), mime="application/pdf")
-        st.pdf(f.read())
+    """Display the PDF using an iframe with PDF.js."""
+    # Encode file path to serve via PDF.js viewer
+    file_url = f"/files/{os.path.basename(file_path)}"
+    pdf_display = f"""
+        <iframe src="https://mozilla.github.io/pdf.js/web/viewer.html?file={file_url}" width="100%" height="800px">
+        </iframe>
+    """
+    st.markdown(pdf_display, unsafe_allow_html=True)
 
 def main():
     st.title("Advanced PDF Viewer")
