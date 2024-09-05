@@ -1,6 +1,3 @@
-import streamlit as st
-import os
-import shutil
 
 # Constants
 FILE_FOLDER = 'files'  # Folder where original PDFs are stored
@@ -20,13 +17,17 @@ def copy_pdf_to_static_folder(pdf_filename):
     dst = os.path.join(STATIC_FOLDER, pdf_filename)
     if not os.path.exists(dst):
         shutil.copy(src, dst)
-    file_url = f"/static/{pdf_filename}"  # URL for the static file
+    file_url = f"/{pdf_filename}"  # URL for the static file
+    st.write(f"Debug: Source Path: {src}")
+    st.write(f"Debug: Destination Path: {dst}")
+    st.write(f"Debug: File URL: {file_url}")
     return file_url
 
 def pdf_viewer(file_url):
-    """Display the PDF using an iframe."""
+    """Display the PDF using PDF.js in an iframe."""
     pdf_display = f"""
-        <iframe src="{file_url}" width="100%" height="800px"></iframe>
+        <iframe src="https://mozilla.github.io/pdf.js/web/viewer.html?file={file_url}" width="100%" height="800px">
+        </iframe>
     """
     st.markdown(pdf_display, unsafe_allow_html=True)
 
