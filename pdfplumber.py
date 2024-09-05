@@ -9,15 +9,11 @@ def list_files():
     return [f for f in os.listdir(FILE_FOLDER) if f.endswith('.pdf') and os.path.isfile(os.path.join(FILE_FOLDER, f))]
 
 def pdf_viewer(file_path):
-    """Display the PDF using an embed tag."""
-    with open(file_path, "rb") as f:
-        base64_pdf = f.read()
-        # Display PDF inside an iframe
-        pdf_display = f"""
-            <iframe src="data:application/pdf;base64,{base64_pdf.decode('latin-1')}" width="100%" height="800px">
-            </iframe>
-        """
-        st.markdown(pdf_display, unsafe_allow_html=True)
+    """Display the PDF using an iframe."""
+    pdf_display = f"""
+        <iframe src="file://{file_path}" width="100%" height="800px"></iframe>
+    """
+    st.markdown(pdf_display, unsafe_allow_html=True)
 
 def main():
     st.title("Advanced PDF Viewer")
