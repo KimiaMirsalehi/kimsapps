@@ -20,7 +20,7 @@ def copy_pdf_to_static_folder(pdf_filename):
     dst = os.path.join(STATIC_FOLDER, pdf_filename)
     if not os.path.exists(dst):
         shutil.copy(src, dst)
-    file_url = f"/{pdf_filename}"  # URL for the static file
+    file_url = f"file://{os.path.abspath(dst)}"  # Use absolute path
     st.write(f"Debug: Source Path: {src}")
     st.write(f"Debug: Destination Path: {dst}")
     st.write(f"Debug: File URL: {file_url}")
