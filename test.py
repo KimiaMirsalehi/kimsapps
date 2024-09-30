@@ -233,7 +233,11 @@ def subburstfunc(data, x_var, y_var):
     data['YEAR'] = data['YEAR'].astype(str)
 
     # Aggregate the data to handle duplicates
-    aggregated_data = data.groupby(['YEAR', x_var], as_index=False)[y_var].sum()
+    aggregated_data = data.groupby(['YEAR', x_var], as_index=False)[y_var].sum().reset_index()
+
+    # Check if 'YEAR' and x_var are unique now
+    if aggregated_data.duplicated(['YEAR', x_var]).any():
+        st.warning("There are still duplicates after aggregation. Please check your data.")
 
     # Generate the Sunburst Chart
     try:
@@ -241,7 +245,6 @@ def subburstfunc(data, x_var, y_var):
         st.plotly_chart(fig)
     except Exception as e:
         st.error(f"Error generating Sunburst chart: {e}")
-
 
 
 # Function to plot box plots for all components
