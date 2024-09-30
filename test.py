@@ -232,15 +232,19 @@ def subburstfunc(data, x_var, y_var):
     # Ensure the YEAR column is treated as a string to avoid unique value issues
     data['YEAR'] = data['YEAR'].astype(str)
     
+    # Check if y_var is numeric and exists in the data
+    if y_var not in data.columns or not pd.api.types.is_numeric_dtype(data[y_var]):
+        st.error(f"The variable '{y_var}' is not valid for summation.")
+        return
+
     # Aggregate data to avoid duplicate values
-    aggregated_data = data.groupby(['YEAR', x_var], as_index=False)[y_var].sum()
+    aggregated_data = data.groupby(['YEAR', x_var], as_index=False).agg({y_var: 'sum'})
 
     # Create the sunburst chart
     fig = px.sunburst(aggregated_data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
-    
+
     # Display the chart
     st.plotly_chart(fig)
-
 
 
 # Function to plot box plots for all components
@@ -342,7 +346,7 @@ def main():
         plot_residuals(model, data[x_cols], data[y_col])
     elif visualization == "VIF" and x_cols and y_col:
         display_vif(sm.add_constant(data[x_cols]))
-        subburstfunc(data, 'YEAR', y_col)
+        subburstfunc(data, x_cols[0], y_col)
 
 # Run the app
 if __name__ == "__main__":
