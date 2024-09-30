@@ -252,6 +252,15 @@ def main():
     # Password protection
     if not check_password():
         st.stop()  # Do not continue if check_password is not True.
+
+    # Page configuration
+    st.set_page_config(
+        page_title="Your DA Assistant",
+        page_icon=":mage:",  # Unicode emoji or provide a path to an image
+        layout="wide"  # Options: "centered" or "wide"
+    )    
+    
+    # Set background and primary colors
     set_background_and_primary_color()
 
     # Your main app logic starts here
