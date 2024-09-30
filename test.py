@@ -180,22 +180,24 @@ def set_background_and_primary_color():
     .stApp {{
        background-image: url("{background_image_url}");
        background-size: cover;
+       color: white;  /* This makes all text in the main part of the app white */
     }}
     .stButton > button {{
-       background-color: #6a0dad;
+       background-color: #8B4000;
        color: white;
     }}
     .stSelectbox > div > div > div {{
-       color: #6a0dad;
+       color: white;  /* This makes select box text white */
     }}
     .stSidebar > div {{
-       background-color: #6a0dad;
+       background-color: #8B4000;
+       color: white;  /* This makes all sidebar text white */
     }}
     .css-1e5imcs {{
-       color: #6a0dad;
+       color: white;  /* This ensures all text in headers, labels, and general UI is white */
     }}
     .css-1v3fvcr {{
-       color: #6a0dad;
+       color: white;  /* Same for other general text in the app */
     }}
     </style>
     """
