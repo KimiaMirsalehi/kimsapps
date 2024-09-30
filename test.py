@@ -210,6 +210,17 @@ def set_background_and_primary_color():
     h1, h2, h3, h4, h5, h6, strong {{
         color: white !important;  /* Make sure all titles and bold text are white */
     }}
+
+    /* Header (top bar) background color */
+    header, .stHeader {{
+        background-color: #8B4000 !important;  /* Change the top bar color to #8B4000 */
+        color: white !important;  /* Ensure text in the header is white */
+    }}
+
+    /* Set the background color of the main content block (optional) */
+    .main {{
+        background-color: #1F1F1F;  /* Dark background for the main body content */
+    }}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
