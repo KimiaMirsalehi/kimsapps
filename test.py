@@ -177,31 +177,43 @@ def set_background_and_primary_color():
     
     css = f"""
     <style>
+    /* Background and overall text color */
     .stApp {{
        background-image: url("{background_image_url}");
        background-size: cover;
-       color: white;  /* This makes all text in the main part of the app white */
+       color: white;
     }}
+
+    /* Button customization */
     .stButton > button {{
        background-color: #8B4000;
        color: white;
     }}
+
+    /* Selectbox text */
     .stSelectbox > div > div > div {{
-       color: black;  /* This makes select box text white */
+       color: black;
     }}
+
+    /* Sidebar background and text color */
     .stSidebar > div {{
        background-color: #8B4000;
-       color: white;  /* This makes all sidebar text white */
+       color: white;  /* This makes the sidebar text white */
     }}
-    .css-1e5imcs {{
-       color: white;  /* This ensures all text in headers, labels, and general UI is white */
+
+    /* General text elements */
+    .css-1e5imcs, .css-1v3fvcr {{
+       color: white !important;  /* Forces text to be white, including titles and headers */
     }}
-    .css-1v3fvcr {{
-       color: white;  /* Same for other general text in the app */
+
+    /* Titles, headings, and any bold text */
+    h1, h2, h3, h4, h5, h6, strong {{
+        color: white !important;  /* Make sure all titles and bold text are white */
     }}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
+
 
 def subburstfunc(data, x_var, y_var):
     fig = px.sunburst(data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
