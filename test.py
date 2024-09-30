@@ -218,7 +218,7 @@ def display_box_plots(data):
     st.plotly_chart(fig)
 
     # Display summary statistics below the box plots
-    display_summary_statistics(data)
+    #display_summary_statistics(data)
 
 # In the main function, add the new visualization option
 def main():
@@ -258,10 +258,10 @@ def main():
     # Sidebar for selecting visualization
     st.sidebar.title("Select Visualization")
     visualization = st.sidebar.selectbox("Choose a visualization to display", 
-                                         options=["Summary Statistics", "Box Plot", "Correlation Matrix", 
+                                         options=["Summary Statistics", "Correlation Matrix", 
                                                   "Scatter Plot Matrix", "3D Scatter Plot", 
                                                   "Parallel Coordinates Plot", "Time Series Plot", "Model Summary", 
-                                                  "Actual vs Predicted", "Residuals", "VIF"])
+                                                  "Actual vs Predicted", "Residuals", "VIF"])#, "Box Plot"
 
     # Variables for 3D scatter plot
     if visualization == "3D Scatter Plot":
@@ -273,8 +273,9 @@ def main():
     # Display the selected visualization
     if visualization == "Summary Statistics":
         display_summary_statistics(data)
-    elif visualization == "Box Plot":
-        display_box_plots(data)  # Box Plot visualization
+        display_box_plots(data)
+    #elif visualization == "Box Plot":
+        #display_box_plots(data)  # Box Plot visualization
     elif visualization == "Correlation Matrix":
         display_correlation_matrix(data)
     elif visualization == "Scatter Plot Matrix":
