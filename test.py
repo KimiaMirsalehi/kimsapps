@@ -229,22 +229,18 @@ def set_background_and_primary_color():
     st.markdown(css, unsafe_allow_html=True)
 
 def subburstfunc(data, x_var, y_var):
-    # Convert 'YEAR' to string
+    # Ensure the YEAR column is treated as a string to avoid unique value issues
     data['YEAR'] = data['YEAR'].astype(str)
+    
+    # Aggregate data to avoid duplicate values
+    aggregated_data = data.groupby(['YEAR', x_var], as_index=False)[y_var].sum()
 
-    # Aggregate the data to handle duplicates
-    aggregated_data = data.groupby(['YEAR', x_var], as_index=False)[y_var].sum().reset_index()
+    # Create the sunburst chart
+    fig = px.sunburst(aggregated_data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
+    
+    # Display the chart
+    st.plotly_chart(fig)
 
-    # Check if 'YEAR' and x_var are unique now
-    if aggregated_data.duplicated(['YEAR', x_var]).any():
-        st.warning("There are still duplicates after aggregation. Please check your data.")
-
-    # Generate the Sunburst Chart
-    try:
-        fig = px.sunburst(aggregated_data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
-        st.plotly_chart(fig)
-    except Exception as e:
-        st.error(f"Error generating Sunburst chart: {e}")
 
 
 # Function to plot box plots for all components
