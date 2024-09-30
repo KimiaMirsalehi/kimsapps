@@ -177,10 +177,12 @@ def set_background_and_primary_color():
     
     css = f"""
     <style>
-    /* Background and overall text color */
+    /* Set the background image and ensure it stays */
     .stApp {{
        background-image: url("{background_image_url}");
        background-size: cover;
+       background-position: center;
+       background-attachment: fixed;
        color: white;
     }}
 
@@ -192,18 +194,18 @@ def set_background_and_primary_color():
 
     /* Selectbox text */
     .stSelectbox > div > div > div {{
-       color: black;
+       color: white;
     }}
 
     /* Sidebar background and text color */
     .stSidebar > div {{
        background-color: #8B4000;
-       color: white;  /* This makes the sidebar text white */
+       color: white;  /* Ensures the sidebar text is white */
     }}
 
     /* General text elements */
     .css-1e5imcs, .css-1v3fvcr {{
-       color: white !important;  /* Forces text to be white, including titles and headers */
+       color: white !important;  /* Forces text in titles, headers, and other elements to be white */
     }}
 
     /* Titles, headings, and any bold text */
@@ -211,19 +213,15 @@ def set_background_and_primary_color():
         color: white !important;  /* Make sure all titles and bold text are white */
     }}
 
-    /* Header (top bar) background color */
+    /* Top bar (header) background color */
     header, .stHeader {{
-        background-color: #8B4000 !important;  /* Change the top bar color to #8B4000 */
-        color: white !important;  /* Ensure text in the header is white */
-    }}
-
-    /* Set the background color of the main content block (optional) */
-    .main {{
-        background-color: #1F1F1F;  /* Dark background for the main body content */
+        background-color: #8B4000 !important;  /* Changes the top bar color to #8B4000 */
+        color: white !important;  /* Ensures text in the top bar is white */
     }}
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
+
 
 
 def subburstfunc(data, x_var, y_var):
