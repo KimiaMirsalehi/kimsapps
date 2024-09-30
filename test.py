@@ -229,8 +229,24 @@ def set_background_and_primary_color():
     st.markdown(css, unsafe_allow_html=True)
 
 def subburstfunc(data, x_var, y_var):
-    fig = px.sunburst(data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
-    st.plotly_chart(fig)
+    # Check if 'YEAR' and the passed variables exist in the dataset
+    if 'YEAR' not in data.columns:
+        st.error("'YEAR' column is missing from the data.")
+        return
+    if x_var not in data.columns or y_var not in data.columns:
+        st.error(f"Columns {x_var} or {y_var} not found in the dataset.")
+        return
+
+    # Convert 'YEAR' to string to ensure it's treated as a categorical value
+    data['YEAR'] = data['YEAR'].astype(str)
+
+    # Generate the Sunburst Chart
+    try:
+        fig = px.sunburst(data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
+        st.plotly_chart(fig)
+    except Exception as e:
+        st.error(f"Error generating Sunburst chart: {e}")
+
 
 # Function to plot box plots for all components
 def display_box_plots(data):
