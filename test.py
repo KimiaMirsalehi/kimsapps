@@ -195,13 +195,13 @@ def set_background_and_primary_color():
     /* Selectbox text customization */
     .stSelectbox > div > div {{
        color: black !important;  /* Ensures the selected option's text is black */
-       background-color: white;  /* Makes sure the background is white for contrast */
+       background-color: white !important;  /* Makes sure the background is white for contrast */
     }}
     
     /* Ensures dropdown options in the selectbox are readable */
-    .stSelectbox > div > div > div {
+    .stSelectbox > div > div > div {{
        color: black !important;  /* Text inside the dropdown will be black */
-    }
+    }}
 
     /* Sidebar background and text color */
     .stSidebar > div {{
@@ -227,8 +227,6 @@ def set_background_and_primary_color():
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
-
-
 
 def subburstfunc(data, x_var, y_var):
     fig = px.sunburst(data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
