@@ -173,7 +173,7 @@ def check_password():
 
 # Function to set background image and primary color
 def set_background_and_primary_color():
-    background_image_url = "https://get.wallhere.com/photo/simple-background-minimalism-humor-artwork-death-dark-humor-brand-product-243890.jpg"  # Replace with the URL to your background image
+    background_image_url = "https://get.wallhere.com/photo/1920x1200-px-material-minimal-minimalism-Star-Wars-1438919.jpg"  # Replace with the URL to your background image
     
     css = f"""
     <style>
