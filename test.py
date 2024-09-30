@@ -205,6 +205,22 @@ def subburstfunc(data, x_var, y_var):
     fig = px.sunburst(data, path=['YEAR', x_var], values=y_var, title='Sunburst Chart')
     st.plotly_chart(fig)
 
+# Function to plot box plots for all components
+def display_box_plots(data):
+    st.write("Box Plots for All Components:")
+    numeric_cols = data.select_dtypes(include=[np.number]).columns  # Only numeric columns
+    fig = go.Figure()
+
+    for col in numeric_cols:
+        fig.add_trace(go.Box(y=data[col], name=col, boxmean=True))
+
+    fig.update_layout(title="Box Plots for Each Feature", xaxis_title="Features", yaxis_title="Values")
+    st.plotly_chart(fig)
+
+    # Display summary statistics below the box plots
+    display_summary_statistics(data)
+
+# In the main function, add the new visualization option
 def main():
     # Password protection
     if not check_password():
@@ -242,7 +258,7 @@ def main():
     # Sidebar for selecting visualization
     st.sidebar.title("Select Visualization")
     visualization = st.sidebar.selectbox("Choose a visualization to display", 
-                                         options=["Summary Statistics", "Correlation Matrix", 
+                                         options=["Summary Statistics", "Box Plot", "Correlation Matrix", 
                                                   "Scatter Plot Matrix", "3D Scatter Plot", 
                                                   "Parallel Coordinates Plot", "Time Series Plot", "Model Summary", 
                                                   "Actual vs Predicted", "Residuals", "VIF"])
@@ -257,6 +273,8 @@ def main():
     # Display the selected visualization
     if visualization == "Summary Statistics":
         display_summary_statistics(data)
+    elif visualization == "Box Plot":
+        display_box_plots(data)  # Box Plot visualization
     elif visualization == "Correlation Matrix":
         display_correlation_matrix(data)
     elif visualization == "Scatter Plot Matrix":
@@ -281,4 +299,3 @@ def main():
 # Run the app
 if __name__ == "__main__":
     main()
-
