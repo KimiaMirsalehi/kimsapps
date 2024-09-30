@@ -187,7 +187,7 @@ def set_background_and_primary_color():
        color: white;
     }}
     .stSelectbox > div > div > div {{
-       color: white;  /* This makes select box text white */
+       color: black;  /* This makes select box text white */
     }}
     .stSidebar > div {{
        background-color: #8B4000;
